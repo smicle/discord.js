@@ -130,10 +130,11 @@ class BitField {
 
   /**
    * Data that can be resolved to give a bitfield. This can be:
-   * * A bit number (this can be a number literal or a value taken from {@link BitField.FLAGS})
+   * * A string (see {@link BitField.FLAGS})
+   * * A bit number
    * * An instance of BitField
    * * An Array of BitFieldResolvable
-   * @typedef {number|BitField|BitFieldResolvable[]} BitFieldResolvable
+   * @typedef {string|number|BitField|BitFieldResolvable[]} BitFieldResolvable
    */
 
   /**
@@ -146,7 +147,9 @@ class BitField {
     if (bit instanceof BitField) return bit.bitfield;
     if (Array.isArray(bit)) return bit.map(p => this.resolve(p)).reduce((prev, p) => prev | p, 0);
     if (typeof bit === 'string' && typeof this.FLAGS[bit] !== 'undefined') return this.FLAGS[bit];
-    throw new RangeError('BITFIELD_INVALID', bit);
+    const error = new RangeError('BITFIELD_INVALID');
+    error.bit = bit;
+    throw error;
   }
 }
 
